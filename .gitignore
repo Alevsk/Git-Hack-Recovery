@@ -1,0 +1,6 @@
+# You should not include the following files
+# while Git Hack Recovery scripts are running in
+# production server (just delete the '#')
+#
+# db_checksum_backup.sh
+# auto_commit.sh

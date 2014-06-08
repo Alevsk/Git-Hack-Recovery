@@ -26,11 +26,8 @@ Git-Hack-Recovery
 This scripts allow you to automatically recover your company website or blog in case of being hacked. Using
 a Infraestructure similar to this: 
 
-_______________                ________________________                ____________________
-|     DB      |   read/write   |	  cpy db.sql.gz   |      read	   |   cpy db.sql.gz   |
-|   Files     | <------------> |		cpy Files     | <------------> | 	 cpy Files     |
-| 127.0.0.0   |                |Private Git Repository|                | Production Server |
-|_____________|                |______________________|                |___________________|
+Trusted System <-- read/write --> Git Repository <-- read --> Production Server
+
 
 Instructions: 
 

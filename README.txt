@@ -23,8 +23,7 @@ THE SOFTWARE.
 Git-Hack-Recovery
 =================
 
-This scripts allow you to automatically recover your company website or blog in case of being hacked. Using
-a Infraestructure similar to this: 
+This scripts allow you to automatically recover your company website or blog in case of being hacked. Using a Infraestructure similar to this: 
 
 Trusted System <-- read/write --> Git Repository <-- read --> Production Server
 

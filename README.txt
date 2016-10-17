@@ -20,54 +20,44 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-Git-Hack-Recovery
-=================
+
+# Git-Hack-Recovery
 
 This scripts allow you to automatically recover your company website or blog in case of being hacked. Using a Infraestructure similar to this: 
 
-Trusted System <-- read/write --> Git Repository <-- read --> Production Server
+[![N|Solid](https://www.alevsk.com/wp-content/uploads/git-hack-recovery.jpg)](https://www.alevsk.com/2014/07/git-hack-recovery-tool-anti-hackeos/)
+
+# Instructions: 
 
 
-Instructions: 
+### Configuring the environment
 
-  ###############################
-  # Configuring the environment #
-  ###############################
   
-  -> Create two git accounts (example: admin & slave)
-  -> Create a private repository to track your files (bitbucket.org is a good option)
-  -> Add read/write permisson to admin account
-  -> Add only read permissions to slave account
-  -> Create your ssh keys using ssh-keygen in every server you want to access the repository and add them to your Git
-     server for public key authentication
+* Create two git accounts (example: admin & slave)
+* Create a private repository to track your files (bitbucket.org is a good option)
+* Add read/write permisson to admin account
+* Add only read permissions to slave account
+* Create your ssh keys using ssh-keygen in every server you want to access the repository and add them to your Git server for public key authentication
+
+### Configuring the trusted system
+
+* On your trusted system (usually your localhost) clone the git repository using your admin account (the one that have read/write permissions) don't forget to check the .htaccess file provided
+* If you install a blog like wordpress, virtual-host configuration and `/etc/hosts` domain addition is strongly recommended
+* When you finish setting are your files and database configuration in your trusted system you must run db_checksum_backup.sh script in order to generate a backup of your database tables and the file that hold checksums
+* When your are done just run auto_commit.sh and you will have a copy of your files and database in your Git repository
+
+### Configuring the production server
   
-  ##################################
-  # Configuring the trusted system #
-  ##################################
-  
-  -> On your trusted system (usually your localhost) clone the git repository using your admin account (the one that have read/write permissions), 
-     don't forget to check the .htaccess file provided
-  -> If you install a blog like wordpress, virtual-host configuration and /etc/hosts domain addition is strongly recommended
-  -> When you finish setting are your files and database configuration in your trusted system you must run db_checksum_backup.sh script
-     in order to generate a backup of your database tables and the file that hold checksums
-  -> When your are done just run auto_commit.sh and you will have a copy of your files and database in your Git repository
-  
-  #####################################
-  # Configuring the production server #
-  #####################################
-  
-  -> On your production server clone the git repository using your slave account (the one that have only read permissions
-  -> Configure your virtual-host correctly (blogs like wordpress store domain url's in the database)
-  -> Create a database with the credentials so the blog can have access information stored
-  -> You can use cron jobs to automatically run the following scripts: 
-    * deface_recovery.sh: if a local file is modified, deleted or a new file is added, this script will rollback the files involved
-      to its last trusted state
-    * auto_update.sh: This script will check for updates on the Git repository, if you have a blog or dynamic website you can update
-      your site in your trusted system (example: publish some new post with image) and this script will take care of properly update your blog
-      in the production server
-    * db_checksum_validator.sh: This script will check your database integrity, in the case that someone hack your database and
-      insert some malicious code such as XSS the script will detect the change and restore the tables to its last trusted state
+* On your production server clone the git repository using your slave account (the one that have only read permissions
+* Configure your virtual-host correctly (blogs like wordpress store domain url's in the database)
+* Create a database with the credentials so the blog can have access information stored
+* You can use cron jobs to automatically run the following scripts: 
+  * `deface_recovery.sh` if a local file is modified, deleted or a new file is added, this script will rollback the files involved to its last trusted state
+  * `auto_update.sh` This script will check for updates on the Git repository, if you have a blog or dynamic website you can update your site in your trusted system (example: publish some new post with image) and this script will take care of properly update your blog in the production server
+  * `db_checksum_validator.sh` This script will check your database integrity, in the case that someone hack your database and insert some malicious code such as XSS the script will detect the change and restore the tables to its last trusted state
       
-    */1 * * * * cd /var/www/production-repository/; /bin/bash deface_recovery.sh --arguments > /path/deface_recovery.txt
-    */1 * * * * cd /var/www/production-repository/; /bin/bash auto_update.sh --arguments > /path/auto_update.txt
-    */1 * * * * cd /var/www/production-repository/; /bin/bash db_checksum_validator.sh --arguments > /path/db_checksum_validator.txt
+```
+*/1 * * * * cd /var/www/public_html/; /bin/bash deface_recovery.sh --arguments > someoutput.txt
+*/1 * * * * cd /var/www/public_html/; /bin/bash auto_update.sh --arguments > someoutput.txt
+*/1 * * * * cd /var/www/public_html/; /bin/bash db_checksum_validator.sh --arguments > someoutput.txt
+```
